@@ -37,15 +37,8 @@ find ( sub {
 my $file =  @file_list[0];
 
 print "Nettoyage de $file \n";
+`perl -i.bak -pe 's/(?<!\n)(?<=[^;])"?(?=[^;])//g;' $file`;
 
-rename($file, $file.'.bak');
-open(IN, '<'.$file.'.bak') or die $!;
-open(OUT, '>'.$file) or die $!;
-while(<IN>){
-    $_ =~ s/(?<!\n)(?<=[^;])"?(?=[^;])//g;
-}
-close(IN);
-close(OUT);
 
 print "Renommage de $file en $rpps_dir/rpps_latest_cleaned.csv \n";
 system "mv  $file $rpps_dir/rpps_latest_cleaned.csv";
