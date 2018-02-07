@@ -40,10 +40,21 @@ if ( $html =~ /$regex/g ) {
     push @file_list, $File::Find::name;
   }, $rpps_dir );
 
-  print "Nettoyage de $rpps_dir/@file_list[0] \n";
-  system "perl -i.bak -pe 's/(?<!\n)(?<=[^;])"?(?=[^;])//g;'  $rpps_dir/@file_list[0]";
+  my $file =  $rpps_dir.'/'.@file_list[0];
 
-  print "Renommage de $rpps_dir/@file_list[0] en $rpps_dir/rpps_latest_cleaned.csv \n";
-  system "mv  $rpps_dir/@file_list[0] $rpps_dir/rpps_latest_cleaned.csv";
+  print "Nettoyage de $file \n";
+
+  rename($file, $file.'.bak');
+  open(IN, '<'.$file.'.bak') or die $!;
+  open(OUT, '>'.$file) or die $!;
+  while(<IN>)
+  {
+    $_ =~ s/(?<!\n)(?<=[^;])"?(?=[^;])//g;
+  }
+  close(IN);
+  close(OUT);
+
+  print "Renommage de $file en $rpps_dir/rpps_latest_cleaned.csv \n";
+  system "mv  $file $rpps_dir/rpps_latest_cleaned.csv";
 }
 
